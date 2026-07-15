@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Card Style with elevation and rounded corners -->
+    <style name="CardGlass" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/backgroundCard</item>
+        <item name="cardCornerRadius">@dimen/radius_m</item>
+        <item name="cardElevation">@dimen/elevation_m</item>
+        <item name="cardPreventCornerOverlap">false</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+    
+    <!-- Primary Button - Gradient with rounded corners -->
+    <style name="ButtonPrimary" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@drawable/button_primary_gradient</item>
+        <item name="android:padding">@dimen/spacing_m</item>
+        <item name="android:textColor">@color/onPrimary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">@dimen/button_radius</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+    
+    <!-- Secondary Button - Outlined -->
+    <style name="ButtonSecondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:padding">@dimen/spacing_m</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">@dimen/button_radius</item>
+        <item name="strokeColor">@color/primary</item>
+        <item name="strokeWidth">2dp</item>
+    </style>
+    
+    <!-- Text Button -->
+    <style name="ButtonText" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:padding">@dimen/spacing_s</item>
+    </style>
+</resources>

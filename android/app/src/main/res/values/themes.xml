@@ -1,7 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.SecureAuth" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primaryDark</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <item name="colorSurface">@color/backgroundSurface</item>
         <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <style name="Theme.SecureAuth.Splash" parent="Theme.SplashScreen">
