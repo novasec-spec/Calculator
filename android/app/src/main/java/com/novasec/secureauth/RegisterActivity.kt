@@ -9,15 +9,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
-import com.novasec.secureauth.data.models.AuthSession
-import com.novasec.secureauth.data.models.RegisterRequest
-import com.novasec.secureauth.network.ApiClient
+import com.novasec.secureauth.repository.AuthRepository
 import com.novasec.secureauth.security.SessionManager
 import kotlinx.coroutines.*
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var authRepository: AuthRepository
     private lateinit var fullNameInput: TextInputEditText
     private lateinit var emailInput: TextInputEditText
     private lateinit var passwordInput: TextInputEditText
@@ -32,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register)
 
         sessionManager = SessionManager(this)
+        authRepository = AuthRepository(this)
 
         // Initialize views
         val backButton = findViewById<ImageView>(R.id.backButton)
@@ -45,11 +45,9 @@ class RegisterActivity : AppCompatActivity() {
         val loginLink = findViewById<TextView>(R.id.loginLink)
 
         backButton.setOnClickListener { finish() }
-        loginLink.setOnClickListener {
-            finish() // Go back to login
-        }
+        loginLink.setOnClickListener { finish() }
 
-        // Password strength checker - Using TextWatcher instead
+        // Password strength checker
         passwordInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -109,37 +107,52 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        // Disable button
         registerButton.isEnabled = false
         registerButton.text = "Creating account..."
 
         coroutineScope.launch {
             try {
-                val response = ApiClient.apiService.register(
-                    RegisterRequest(
-                        email = email,
-                        password = password,
-                        fullName = fullName
-                    )
+                // Attempt registration with Supabase
+                val result = withTimeout(10000) {
+                    authRepository.signUp(email, password, fullName)
+                }
+
+                result.fold(
+                    onSuccess = { user ->
+                        // Save session
+                        sessionManager.saveSession(user)
+                        
+                        Toast.makeText(
+                            this@RegisterActivity,
+                            "Account created successfully!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        
+// Replace finish() with:
+startActivity(Intent(this, MainActivity::class.java))
+finish()
+                    },
+                    onFailure = { error ->
+                        val message = when {
+                            error.message?.contains("User already registered") == true ->
+                                "Email already registered. Please login."
+                            else -> error.message ?: "Registration failed"
+                        }
+                        showError(message)
+                    }
                 )
 
-                // Save session
-                val session = AuthSession(
-                    accessToken = response.accessToken,
-                    refreshToken = response.refreshToken,
-                    expiresAt = System.currentTimeMillis() + (response.expiresIn * 1000),
-                    user = response.user
-                )
-                sessionManager.saveSession(session)
-
-                // Success
-                Toast.makeText(this@RegisterActivity, "Account created successfully!", Toast.LENGTH_LONG).show()
-                // TODO: Navigate to MainActivity
-                finish()
-
+            } catch (e: java.util.concurrent.TimeoutException) {
+                showError("Connection timeout. Please try again.")
             } catch (e: Exception) {
-                val error = if (e.message != null) "Registration failed: ${e.message}" else "Network error. Please try again."
-                showError(error)
+                val message = when {
+                    e.message?.contains("Unable to resolve host") == true -> 
+                        "Network error. Please check your connection."
+                    e.message?.contains("timeout") == true ->
+                        "Connection timeout. Please try again."
+                    else -> "Registration failed. Please try again."
+                }
+                showError(message)
             } finally {
                 registerButton.isEnabled = true
                 registerButton.text = "Create Account"

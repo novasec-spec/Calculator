@@ -4,17 +4,18 @@ import android.content.Context
 import com.google.gson.Gson
 import com.novasec.secureauth.data.local.CacheDatabase
 import com.novasec.secureauth.data.local.CachedUser
-import com.novasec.secureauth.data.models.AuthSession
 import com.novasec.secureauth.data.models.User
-import kotlinx.coroutines.CoroutineScope
+import com.novasec.secureauth.repository.AuthRepository
+import com.novasec.secureauth.supabase.supabaseClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SessionManager(private val context: Context) {
     private val encryptionManager = EncryptionManager(context)
     private val gson = Gson()
     private val db = CacheDatabase.getInstance(context)
+    private val authRepository = AuthRepository(context)
+    private val supabase = context.supabaseClient()
 
     companion object {
         private const val LOCKOUT_DURATION_MS = 15 * 60 * 1000L // 15 minutes
@@ -24,97 +25,86 @@ class SessionManager(private val context: Context) {
     /**
      * Save auth session encrypted
      */
-    suspend fun saveSession(session: AuthSession) {
+    suspend fun saveSession(user: User) {
         withContext(Dispatchers.IO) {
-            encryptionManager.storeEncrypted(
-                EncryptionManager.AuthKeys.ACCESS_TOKEN,
-                session.accessToken
-            )
-            encryptionManager.storeEncrypted(
-                EncryptionManager.AuthKeys.REFRESH_TOKEN,
-                session.refreshToken
-            )
-            encryptionManager.storeEncrypted(
-                EncryptionManager.AuthKeys.EXPIRES_AT,
-                session.expiresAt.toString()
-            )
-            encryptionManager.storeEncrypted(
-                EncryptionManager.AuthKeys.USER_JSON,
-                gson.toJson(session.user)
-            )
-            encryptionManager.storeEncrypted(
-                EncryptionManager.AuthKeys.USER_EMAIL,
-                session.user.email
-            )
-            encryptionManager.storeEncrypted(
-                EncryptionManager.AuthKeys.USER_NAME,
-                session.user.fullName
-            )
-
-            // Cache user in Room for offline access
-            db.userDao().insertUser(
-                CachedUser(
-                    id = session.user.id,
-                    email = session.user.email,
-                    fullName = session.user.fullName,
-                    createdAt = session.user.createdAt,
-                    lastLogin = System.currentTimeMillis()
+            try {
+                encryptionManager.storeEncrypted(
+                    EncryptionManager.AuthKeys.USER_JSON,
+                    gson.toJson(user)
                 )
-            )
+                encryptionManager.storeEncrypted(
+                    EncryptionManager.AuthKeys.USER_EMAIL,
+                    user.email
+                )
+                encryptionManager.storeEncrypted(
+                    EncryptionManager.AuthKeys.USER_NAME,
+                    user.fullName
+                )
+                encryptionManager.storeEncrypted(
+                    EncryptionManager.AuthKeys.EXPIRES_AT,
+                    (System.currentTimeMillis() + 3600 * 1000).toString() // 1 hour
+                )
+
+                // Cache user in Room for offline access
+                db.userDao().insertUser(
+                    CachedUser(
+                        id = user.id,
+                        email = user.email,
+                        fullName = user.fullName,
+                        createdAt = user.createdAt,
+                        lastLogin = System.currentTimeMillis()
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     /**
      * Get current session
      */
-    suspend fun getSession(): AuthSession? = withContext(Dispatchers.IO) {
-        val accessToken = encryptionManager.getEncrypted(EncryptionManager.AuthKeys.ACCESS_TOKEN)
-        val refreshToken = encryptionManager.getEncrypted(EncryptionManager.AuthKeys.REFRESH_TOKEN)
-        val expiresAtStr = encryptionManager.getEncrypted(EncryptionManager.AuthKeys.EXPIRES_AT)
-        val userJson = encryptionManager.getEncrypted(EncryptionManager.AuthKeys.USER_JSON)
-
-        return@withContext if (accessToken != null && refreshToken != null && expiresAtStr != null && userJson != null) {
-            val expiresAt = expiresAtStr.toLongOrNull()
-            val user = gson.fromJson(userJson, User::class.java)
-            if (expiresAt != null && user != null) {
-                AuthSession(
-                    accessToken = accessToken,
-                    refreshToken = refreshToken,
-                    expiresAt = expiresAt,
-                    user = user
-                )
+    suspend fun getSession(): User? = withContext(Dispatchers.IO) {
+        try {
+            val userJson = encryptionManager.getEncrypted(EncryptionManager.AuthKeys.USER_JSON)
+            if (userJson != null) {
+                gson.fromJson(userJson, User::class.java)
             } else null
-        } else null
+        } catch (e: Exception) {
+            null
+        }
     }
 
     /**
-     * Get access token
+     * Get current user (with Supabase session check)
      */
-    fun getAccessToken(): String? {
-        return encryptionManager.getEncrypted(EncryptionManager.AuthKeys.ACCESS_TOKEN)
+    suspend fun getCurrentUser(): User? {
+        return try {
+            if (supabase.auth.currentUserOrNull() != null) {
+                getSession()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     /**
-     * Get refresh token
-     */
-    fun getRefreshToken(): String? {
-        return encryptionManager.getEncrypted(EncryptionManager.AuthKeys.REFRESH_TOKEN)
-    }
-
-    /**
-     * Check if session is valid and not expired
+     * Check if session is valid
      */
     suspend fun isSessionValid(): Boolean = withContext(Dispatchers.IO) {
-        val session = getSession()
-        return@withContext session != null && session.expiresAt > System.currentTimeMillis()
-    }
-
-    /**
-     * Check if session needs refresh (within 5 minutes of expiry)
-     */
-    suspend fun needsRefresh(): Boolean = withContext(Dispatchers.IO) {
-        val session = getSession()
-        return@withContext session != null && (session.expiresAt - System.currentTimeMillis()) < 5 * 60 * 1000
+        try {
+            val expiresAtStr = encryptionManager.getEncrypted(EncryptionManager.AuthKeys.EXPIRES_AT)
+            val expiresAt = expiresAtStr?.toLongOrNull() ?: 0
+            
+            // Check Supabase session too
+            val isAuthenticated = supabase.auth.currentUserOrNull() != null
+            
+            expiresAt > System.currentTimeMillis() && isAuthenticated
+        } catch (e: Exception) {
+            false
+        }
     }
 
     /**
@@ -122,8 +112,13 @@ class SessionManager(private val context: Context) {
      */
     suspend fun clearSession() {
         withContext(Dispatchers.IO) {
-            encryptionManager.clearAll()
-            db.userDao().deleteAllUsers()
+            try {
+                encryptionManager.clearAll()
+                db.userDao().deleteAllUsers()
+                authRepository.signOut()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -131,9 +126,13 @@ class SessionManager(private val context: Context) {
      * Rate limiting - check if user is locked out
      */
     suspend fun isLockedOut(email: String): Boolean = withContext(Dispatchers.IO) {
-        val since = System.currentTimeMillis() - LOCKOUT_DURATION_MS
-        val attempts = db.authAttemptDao().getAttemptCount(email, since)
-        return@withContext attempts >= MAX_ATTEMPTS
+        try {
+            val since = System.currentTimeMillis() - LOCKOUT_DURATION_MS
+            val attempts = db.authAttemptDao().getAttemptCount(email, since)
+            attempts >= MAX_ATTEMPTS
+        } catch (e: Exception) {
+            false
+        }
     }
 
     /**
@@ -141,22 +140,23 @@ class SessionManager(private val context: Context) {
      */
     suspend fun recordAuthAttempt(email: String, success: Boolean) {
         withContext(Dispatchers.IO) {
-            // Clear old attempts
-            val olderThan = System.currentTimeMillis() - LOCKOUT_DURATION_MS
-            db.authAttemptDao().deleteOldAttempts(olderThan)
+            try {
+                val olderThan = System.currentTimeMillis() - LOCKOUT_DURATION_MS
+                db.authAttemptDao().deleteOldAttempts(olderThan)
 
-            // Record new attempt
-            db.authAttemptDao().insertAttempt(
-                com.novasec.secureauth.data.local.AuthAttempt(
-                    email = email,
-                    timestamp = System.currentTimeMillis(),
-                    success = success
+                db.authAttemptDao().insertAttempt(
+                    com.novasec.secureauth.data.local.AuthAttempt(
+                        email = email,
+                        timestamp = System.currentTimeMillis(),
+                        success = success
+                    )
                 )
-            )
 
-            // If successful, clear attempts for this email
-            if (success) {
-                db.authAttemptDao().clearAttempts(email)
+                if (success) {
+                    db.authAttemptDao().clearAttempts(email)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -165,17 +165,25 @@ class SessionManager(private val context: Context) {
      * Set biometric preference
      */
     fun setBiometricEnabled(enabled: Boolean) {
-        encryptionManager.storeEncrypted(
-            EncryptionManager.AuthKeys.BIOMETRIC_ENABLED,
-            enabled.toString()
-        )
+        try {
+            encryptionManager.storeEncrypted(
+                EncryptionManager.AuthKeys.BIOMETRIC_ENABLED,
+                enabled.toString()
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     /**
      * Check if biometric is enabled
      */
     fun isBiometricEnabled(): Boolean {
-        return encryptionManager.getEncrypted(EncryptionManager.AuthKeys.BIOMETRIC_ENABLED)?.toBoolean() ?: false
+        return try {
+            encryptionManager.getEncrypted(EncryptionManager.AuthKeys.BIOMETRIC_ENABLED)?.toBoolean() ?: false
+        } catch (e: Exception) {
+            false
+        }
     }
 
     /**
@@ -183,7 +191,11 @@ class SessionManager(private val context: Context) {
      */
     suspend fun getCachedUser(email: String): CachedUser? {
         return withContext(Dispatchers.IO) {
-            db.userDao().getUserByEmail(email)
+            try {
+                db.userDao().getUserByEmail(email)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 }

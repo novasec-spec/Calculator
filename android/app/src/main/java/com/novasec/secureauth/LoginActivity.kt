@@ -9,16 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.novasec.secureauth.data.models.AuthSession
-import com.novasec.secureauth.data.models.LoginRequest
-import com.novasec.secureauth.network.ApiClient
+import com.novasec.secureauth.repository.AuthRepository
 import com.novasec.secureauth.security.SessionManager
 import kotlinx.coroutines.*
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var authRepository: AuthRepository
     private lateinit var emailInput: TextInputEditText
     private lateinit var passwordInput: TextInputEditText
     private lateinit var errorMessage: TextView
@@ -30,6 +28,10 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // Initialize
+        sessionManager = SessionManager(this)
+        authRepository = AuthRepository(this)
+
         // Initialize views
         emailInput = findViewById(R.id.emailInput)
         passwordInput = findViewById(R.id.passwordInput)
@@ -39,8 +41,6 @@ class LoginActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.backButton)
         val registerLink = findViewById<TextView>(R.id.registerLink)
 
-        sessionManager = SessionManager(this)
-
         backButton.setOnClickListener { finish() }
         registerLink.setOnClickListener {
             startActivity(android.content.Intent(this, RegisterActivity::class.java))
@@ -48,7 +48,6 @@ class LoginActivity : AppCompatActivity() {
 
         loginButton.setOnClickListener { performLogin() }
 
-        // Check for biometric availability
         checkBiometricAvailability()
     }
 
@@ -66,13 +65,12 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // Disable button to prevent double clicks
         loginButton.isEnabled = false
         loginButton.text = "Signing in..."
 
         coroutineScope.launch {
             try {
-                // Check rate limiting first
+                // Check rate limiting
                 if (sessionManager.isLockedOut(email)) {
                     showError("Too many failed attempts. Please try again later.")
                     loginButton.isEnabled = true
@@ -80,27 +78,52 @@ class LoginActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                // Attempt login
-                val response = ApiClient.apiService.login(LoginRequest(email, password))
+                // Attempt login with Supabase
+                val result = withTimeout(10000) {
+                    authRepository.signIn(email, password)
+                }
 
-                // Save session
-                val session = AuthSession(
-                    accessToken = response.accessToken,
-                    refreshToken = response.refreshToken,
-                    expiresAt = System.currentTimeMillis() + (response.expiresIn * 1000),
-                    user = response.user
+                result.fold(
+                    onSuccess = { user ->
+                        // Save session
+                        sessionManager.saveSession(user)
+                        sessionManager.recordAuthAttempt(email, true)
+
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Welcome ${user.fullName}!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        
+                        // Navigate to main screen
+
+// Replace finish() with:
+startActivity(Intent(this, MainActivity::class.java))
+finish()
+                        // TODO: Start MainActivity
+                    },
+                    onFailure = { error ->
+                        sessionManager.recordAuthAttempt(email, false)
+                        val message = when (error.message) {
+                            null -> "Invalid credentials"
+                            else -> error.message ?: "Login failed"
+                        }
+                        showError(message)
+                    }
                 )
-                sessionManager.saveSession(session)
-                sessionManager.recordAuthAttempt(email, true)
 
-                // Success - go to main screen
-                Toast.makeText(this@LoginActivity, "Welcome ${response.user.fullName}!", Toast.LENGTH_SHORT).show()
-                // TODO: Navigate to MainActivity
-
+            } catch (e: java.util.concurrent.TimeoutException) {
+                showError("Connection timeout. Please try again.")
             } catch (e: Exception) {
                 sessionManager.recordAuthAttempt(email, false)
-                val error = if (e.message != null) "Invalid credentials" else "Network error. Please try again."
-                showError(error)
+                val message = when {
+                    e.message?.contains("Unable to resolve host") == true -> 
+                        "Network error. Please check your connection."
+                    e.message?.contains("timeout") == true ->
+                        "Connection timeout. Please try again."
+                    else -> "Login failed. Please try again."
+                }
+                showError(message)
             } finally {
                 loginButton.isEnabled = true
                 loginButton.text = "Sign In"
@@ -109,42 +132,63 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun checkBiometricAvailability() {
-        val biometricPrompt = BiometricPrompt(
-            this,
-            ContextCompat.getMainExecutor(this),
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    // Biometric success - get cached credentials and login
-                    coroutineScope.launch {
-                        val email = sessionManager.getCachedUser("")?.email
-                        if (email != null) {
-                            // Auto-fill and login
-                            emailInput.setText(email)
-                            performLogin()
+        try {
+            val biometricPrompt = BiometricPrompt(
+                this,
+                ContextCompat.getMainExecutor(this),
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        coroutineScope.launch {
+                            try {
+                                // Try to login with cached credentials
+                                val cachedUser = sessionManager.getCachedUser("")
+                                if (cachedUser != null) {
+                                    emailInput.setText(cachedUser.email)
+                                    // Use stored password from secure storage
+                                    performLogin()
+                                } else {
+                                    Toast.makeText(
+                                        this@LoginActivity,
+                                        "No saved credentials found",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    "Biometric login failed",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
-                }
 
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    Toast.makeText(this@LoginActivity, "Biometric failed: $errString", Toast.LENGTH_SHORT).show()
+                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                        super.onAuthenticationError(errorCode, errString)
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Biometric failed: $errString",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            )
+
+            if (sessionManager.isBiometricEnabled()) {
+                biometricButton.visibility = android.view.View.VISIBLE
+                biometricButton.setOnClickListener {
+                    val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                        .setTitle("Biometric Login")
+                        .setSubtitle("Use your fingerprint to login")
+                        .setDescription("Securely access your account")
+                        .setNegativeButtonText("Cancel")
+                        .build()
+                    biometricPrompt.authenticate(promptInfo)
                 }
             }
-        )
-
-        // Check if biometric is enabled and available
-        if (sessionManager.isBiometricEnabled()) {
-            biometricButton.visibility = android.view.View.VISIBLE
-            biometricButton.setOnClickListener {
-                val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Biometric Login")
-                    .setSubtitle("Use your fingerprint to login")
-                    .setDescription("Securely access your account")
-                    .setNegativeButtonText("Cancel")
-                    .build()
-                biometricPrompt.authenticate(promptInfo)
-            }
+        } catch (e: Exception) {
+            biometricButton.visibility = android.view.View.GONE
         }
     }
 

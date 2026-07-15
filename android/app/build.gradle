@@ -80,4 +80,19 @@ dependencies {
     
     // NEW: Security SharedPreferences
     implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
+
+    // Supabase
+    implementation 'io.github.jan-tennert.supabase:postgrest-kt:2.0.3'
+    implementation 'io.github.jan-tennert.supabase:auth-kt:2.0.3'
+    implementation 'io.github.jan-tennert.supabase:realtime-kt:2.0.3'
+    implementation 'io.github.jan-tennert.supabase:storage-kt:2.0.3'
+    
+    // Ktor for Supabase networking
+    implementation 'io.ktor:ktor-client-core:2.3.7'
+    implementation 'io.ktor:ktor-client-android:2.3.7'
+    implementation 'io.ktor:ktor-client-content-negotiation:2.3.7'
+    implementation 'io.ktor:ktor-serialization-gson:2.3.7'
+    
+    // For better serialization
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
