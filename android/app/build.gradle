@@ -81,7 +81,15 @@ dependencies {
     // NEW: Security SharedPreferences
     implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
 
-    // Supabase
+
+
+    
+    // Networking (already have)
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    
     implementation 'io.github.jan-tennert.supabase:postgrest-kt:2.0.3'
     implementation 'io.github.jan-tennert.supabase:auth-kt:2.0.3'
     implementation 'io.github.jan-tennert.supabase:realtime-kt:2.0.3'
