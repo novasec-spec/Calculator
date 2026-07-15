@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.novasec.secureauth.data.models.AuthSession
 import com.novasec.secureauth.data.models.LoginRequest
 import com.novasec.secureauth.network.ApiClient
@@ -28,12 +30,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Fix: Add missing imports for TextInputEditText
-        val emailInput = findViewById<TextInputEditText>(R.id.emailInput)
-        val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
-        val errorMessage = findViewById<TextView>(R.id.errorMessage)
-        val loginButton = findViewById<Button>(R.id.loginButton)
-        val biometricButton = findViewById<Button>(R.id.biometricButton)
+        // Initialize views
+        emailInput = findViewById(R.id.emailInput)
+        passwordInput = findViewById(R.id.passwordInput)
+        errorMessage = findViewById(R.id.errorMessage)
+        loginButton = findViewById(R.id.loginButton)
+        biometricButton = findViewById(R.id.biometricButton)
         val backButton = findViewById<ImageView>(R.id.backButton)
         val registerLink = findViewById<TextView>(R.id.registerLink)
 
