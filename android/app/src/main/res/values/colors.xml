@@ -1,0 +1,6 @@
+<resources>
+    <color name="background">#1A1A2E</color>
+    <color name="primary">#4CAF50</color>
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="textSecondary">#B0B3C0</color>
+</resources>

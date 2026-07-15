@@ -1,2 +1,2 @@
-rootProject.name = "Calculator"
+rootProject.name = "SecureAuth"
 include ':app'

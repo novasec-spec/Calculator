@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">Calculator</string>
+    <string name="app_name">SecureAuth</string>
+
+    <string name="onboarding_title_1">Your data, locked down</string>
+    <string name="onboarding_desc_1">Every credential is encrypted on-device using hardware-backed Android Keystore. Not even we can read it.</string>
+
+    <string name="onboarding_title_2">Fast, offline-first</string>
+    <string name="onboarding_desc_2">Cached sessions mean you stay signed in securely, even with a spotty connection.</string>
+
+    <string name="onboarding_title_3">You\'re in control</string>
+    <string name="onboarding_desc_3">Biometric lock, session timeouts, and full account recovery — built in from day one.</string>
+
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+
+    <string name="welcome_title">Welcome</string>
+    <string name="login">Log In</string>
+    <string name="create_account">Create Account</string>
 </resources>
