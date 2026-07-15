@@ -9,15 +9,15 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-
 class OnboardingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-      
-     val pages = listOf(
+
+        // Remove WindowCompat line - it was causing the error
+
+        val pages = listOf(
             OnboardingItem(
                 getString(R.string.onboarding_title_1),
                 getString(R.string.onboarding_desc_1)

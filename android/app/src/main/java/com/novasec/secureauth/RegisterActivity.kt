@@ -2,12 +2,13 @@ package com.novasec.secureauth
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
-import com.novasec.secureauth.data.models.RegisterRequest
 import com.novasec.secureauth.data.models.AuthSession
+import com.novasec.secureauth.data.models.RegisterRequest
 import com.novasec.secureauth.network.ApiClient
 import com.novasec.secureauth.security.SessionManager
 import kotlinx.coroutines.*
@@ -42,11 +43,11 @@ class RegisterActivity : AppCompatActivity() {
         val loginLink = findViewById<TextView>(R.id.loginLink)
 
         backButton.setOnClickListener { finish() }
-        loginLink.setOnClickListener { 
+        loginLink.setOnClickListener {
             finish() // Go back to login
         }
 
-        // Password strength checker
+        // Password strength checker - Fixed the listener
         passwordInput.setOnTextChangedListener { _, _, _, _ ->
             checkPasswordStrength()
         }
@@ -63,9 +64,9 @@ class RegisterActivity : AppCompatActivity() {
         }
         passwordStrength.text = "Password strength: $strength"
         val color = when (strength) {
-            "Weak" -> getColor(R.color.error)
-            "Medium" -> getColor(R.color.warning)
-            else -> getColor(R.color.success)
+            "Weak" -> getColor(android.R.color.holo_red_dark)
+            "Medium" -> getColor(android.R.color.holo_orange_dark)
+            else -> getColor(android.R.color.holo_green_dark)
         }
         passwordStrength.setTextColor(color)
     }
