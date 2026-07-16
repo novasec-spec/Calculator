@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.novasec.nova.ui.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_notes"
+        android:name="com.novasec.nova.ui.notes.NotesFragment"
+        android:label="Notes"
+        tools:layout="@layout/fragment_notes" />
+
+    <fragment
+        android:id="@+id/navigation_memories"
+        android:name="com.novasec.nova.ui.memories.MemoriesFragment"
+        android:label="Memories"
+        tools:layout="@layout/fragment_memories" />
+
+    <fragment
+        android:id="@+id/navigation_vibe"
+        android:name="com.novasec.nova.ui.vibe.VibeFragment"
+        android:label="Vibe"
+        tools:layout="@layout/fragment_vibe" />
+
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="com.novasec.nova.ui.chat.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat" />
+
+</navigation>

@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#6C63FF</color>
-    <color name="primaryDark">#5A52D5</color>
-    <color name="primaryLight">#8B83FF</color>
-    <color name="primaryGradientStart">#6C63FF</color>
-    <color name="primaryGradientEnd">#4A3FCF</color>
-    <color name="background">#0F0E1A</color>
-    <color name="backgroundSurface">#1A1932</color>
-    <color name="backgroundCard">#252445</color>
-    <color name="onPrimary">#FFFFFF</color>
-    <color name="textPrimary">#FFFFFF</color>
-    <color name="textSecondary">#A8A7C4</color>
-    <color name="textHint">#6A6985</color>
-    <color name="success">#4CAF50</color>
-    <color name="error">#FF6B6B</color>
-    <color name="warning">#FFD93D</color>
-    <color name="shadowColor">#1A1A2E</color>
+    <color name="pink">#FF6B9D</color>
+    <color name="pink_20">#FF6B9D20</color>
+    <color name="purple">#8B5CF6</color>
+    <color name="purple_20">#8B5CF620</color>
+    <color name="background">#FFF5F7</color>
+    <color name="white">#FFFFFF</color>
+    <color name="text_primary">#3A1A2E</color>
+    <color name="text_secondary">#9A7090</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F5F0F3</color>
+    <color name="divider">#E8E0E6</color>
 </resources>
