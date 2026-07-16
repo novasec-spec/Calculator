@@ -130,7 +130,7 @@ class RegisterActivity : AppCompatActivity() {
                         ).show()
                         
 // Replace finish() with:
-startActivity(Intent(this, MainActivity::class.java))
+startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
 finish()
                     },
                     onFailure = { error ->

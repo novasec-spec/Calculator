@@ -99,7 +99,7 @@ class LoginActivity : AppCompatActivity() {
                         // Navigate to main screen
 
 // Replace finish() with:
-startActivity(Intent(this, MainActivity::class.java))
+startActivity(Intent(this@LoginActivity, MainActivity::class.java))
 finish()
                         // TODO: Start MainActivity
                     },
