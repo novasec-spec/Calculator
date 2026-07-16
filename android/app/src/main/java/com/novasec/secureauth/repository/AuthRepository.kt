@@ -9,6 +9,7 @@ import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import android.content.Intent
 
 class AuthRepository(private val context: Context) {
     

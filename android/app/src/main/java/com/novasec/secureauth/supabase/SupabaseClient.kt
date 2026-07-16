@@ -9,6 +9,7 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
 import io.ktor.client.engine.android.Android
+import android.content.Intent
 
 object SupabaseClient {
     // IMPORTANT: Replace these with your actual Supabase credentials
