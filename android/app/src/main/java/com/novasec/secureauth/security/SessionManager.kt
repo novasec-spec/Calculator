@@ -6,7 +6,7 @@ import com.novasec.secureauth.data.local.CacheDatabase
 import com.novasec.secureauth.data.local.CachedUser
 import com.novasec.secureauth.data.models.User
 import com.novasec.secureauth.repository.AuthRepository
-import com.novasec.secureauth.supabase.supabaseClient
+import com.novasec.secureauth.supabase.SupabaseClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -184,7 +184,7 @@ class SessionManager(private val context: Context) {
         } catch (e: Exception) {
             false
         }
-    }
+À    }
 
     /**
      * Get cached user from Room (offline-first)
