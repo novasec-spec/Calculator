@@ -78,11 +78,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
     
-    // NEW: Security SharedPreferences
     implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
-implementation("io.github.jan-tennert.supabase:postgrest-kt:3.2.0")
-implementation("io.github.jan-tennert.supabase:auth-kt:3.2.0")
-implementation("io.github.jan-tennert.supabase:storage-kt:3.2.0")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:3.2.0")
+    implementation("io.github.jan-tennert.supabase:auth-kt:3.2.0")
+    implementation("io.github.jan-tennert.supabase:storage-kt:3.2.0")
 
 
     
