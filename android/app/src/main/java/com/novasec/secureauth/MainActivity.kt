@@ -1,51 +1,29 @@
 package com.novasec.secureauth
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.novasec.secureauth.security.SessionManager
-import kotlinx.coroutines.*
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import com.yourapp.presentation.navigation.AuthNavigation
+import com.yourapp.ui.theme.YourAppTheme
 
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var sessionManager: SessionManager
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
-
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        sessionManager = SessionManager(this)
-
-        val welcomeText = findViewById<TextView>(R.id.welcomeText)
-        val logoutButton = findViewById<Button>(R.id.logoutButton)
-
-        coroutineScope.launch {
-            val user = sessionManager.getSession()
-            if (user != null) {
-                welcomeText.text = "Welcome, ${user.fullName}! 👋"
-            } else {
-                welcomeText.text = "Welcome! 👋"
+        enableEdgeToEdge()
+        setContent {
+            YourAppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AuthNavigation()
+                }
             }
         }
-
-        logoutButton.setOnClickListener {
-            coroutineScope.launch {
-                sessionManager.clearSession()
-                Toast.makeText(
-                    this@MainActivity,
-                    "Logged out successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-                finish()
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        coroutineScope.cancel()
     }
 }

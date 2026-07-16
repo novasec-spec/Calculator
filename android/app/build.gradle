@@ -58,47 +58,28 @@ buildFeatures {
 }
 
 dependencies {
-    // Existing deps
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.core:core-splashscreen:1.2.0'
-    implementation 'androidx.viewpager2:viewpager2:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-    // Security & Auth
-    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
-    implementation 'androidx.biometric:biometric:1.1.0'
-
-    // Networking (Retrofit + OkHttp) — single copy only
-    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-
-    // Room Database
-    implementation 'androidx.room:room-runtime:2.6.1'
-    implementation 'androidx.room:room-ktx:2.6.1'
-    kapt 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21'
-
+    // Supabase Kotlin SDK
+    implementation("io.github.jan-tennert.supabase:client-kt:3.0.0")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:3.0.0")
+    
+    // Compose
+    implementation(platform("androidx.compose:compose-bom:2026.06.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.8.0")
+    
+    // ViewModel & Lifecycle
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
+    
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-
-    // Lifecycle
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
-
-implementation platform("io.github.jan-tennert.supabase:bom:VERSION")
-implementation 'io.github.jan-tennert.supabase:postgrest-kt'
-implementation 'io.github.jan-tennert.supabase:auth-kt'
-implementation 'io.github.jan-tennert.supabase:realtime-kt'
-
-    implementation 'io.ktor:ktor-client-core:3.2.2'
-    implementation 'io.ktor:ktor-client-android:3.2.2'
-    implementation 'io.ktor:ktor-client-content-negotiation:3.2.2'
-    implementation 'io.ktor:ktor-serialization-gson:3.2.2'
-
-    // Serialization
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+    
+    // Ktor (required by Supabase)
+    implementation("io.ktor:ktor-client-android:2.3.12")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
 }
