@@ -24,6 +24,16 @@ android {
         }
     }
 
+
+configurations.all {
+    resolutionStrategy {
+        force 'io.ktor:ktor-client-core-jvm:3.2.2'
+        force 'io.ktor:ktor-client-core:3.2.2'
+        force 'io.ktor:ktor-client-android:3.2.2'
+        force 'io.ktor:ktor-client-content-negotiation:3.2.2'
+        force 'io.ktor:ktor-serialization-gson:3.2.2'
+    }
+}
     buildTypes {
         release {
             signingConfig signingConfigs.release
@@ -86,11 +96,10 @@ dependencies {
     implementation 'io.github.jan-tennert.supabase:storage-kt'
     implementation 'io.github.jan-tennert.supabase:realtime-kt'
 
-    // Ktor for Supabase networking
-    implementation 'io.ktor:ktor-client-core:2.3.7'
-    implementation 'io.ktor:ktor-client-android:2.3.7'
-    implementation 'io.ktor:ktor-client-content-negotiation:2.3.7'
-    implementation 'io.ktor:ktor-serialization-gson:2.3.7'
+    implementation 'io.ktor:ktor-client-core:3.2.2'
+    implementation 'io.ktor:ktor-client-android:3.2.2'
+    implementation 'io.ktor:ktor-client-content-negotiation:3.2.2'
+    implementation 'io.ktor:ktor-serialization-gson:3.2.2'
 
     // Serialization
     implementation 'com.google.code.gson:gson:2.10.1'
