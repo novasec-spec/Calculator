@@ -55,50 +55,43 @@ dependencies {
     implementation 'androidx.core:core-splashscreen:1.2.0'
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    
-    // NEW: Security & Auth
+
+    // Security & Auth
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+    implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
     implementation 'androidx.biometric:biometric:1.1.0'
-    
-    // NEW: Networking (Retrofit + OkHttp)
+
+    // Networking (Retrofit + OkHttp) — single copy only
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-    
-    // NEW: Room Database
+
+    // Room Database
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'androidx.room:room-ktx:2.6.1'
     kapt 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21'
-    
-    // NEW: Coroutines
+
+    // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-    
-    // NEW: Lifecycle
+
+    // Lifecycle
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
-    
-    implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
-    implementation("io.github.jan-tennert.supabase:postgrest-kt:3.2.0")
-    implementation("io.github.jan-tennert.supabase:auth-kt:3.2.0")
-    implementation("io.github.jan-tennert.supabase:storage-kt:3.2.0")
 
+    // Supabase — use the BOM so every module stays on a matching version
+    implementation platform('io.github.jan-tennert.supabase:bom:3.2.0')
+    implementation 'io.github.jan-tennert.supabase:postgrest-kt'
+    implementation 'io.github.jan-tennert.supabase:auth-kt'
+    implementation 'io.github.jan-tennert.supabase:storage-kt'
+    implementation 'io.github.jan-tennert.supabase:realtime-kt'
 
-    
-    // Networking (already have)
-    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-    
-    implementation 'io.github.jan-tennert.supabase:realtime-kt:2.0.3'
-    
     // Ktor for Supabase networking
     implementation 'io.ktor:ktor-client-core:2.3.7'
     implementation 'io.ktor:ktor-client-android:2.3.7'
     implementation 'io.ktor:ktor-client-content-negotiation:2.3.7'
     implementation 'io.ktor:ktor-serialization-gson:2.3.7'
-    
-    // For better serialization
+
+    // Serialization
     implementation 'com.google.code.gson:gson:2.10.1'
 }
