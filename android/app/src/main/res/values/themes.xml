@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Nova" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/pink</item>
-        <item name="colorPrimaryVariant">@color/pink</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="android:statusBarColor">@color/pink</item>
-        <item name="android:windowBackground">@color/background</item>
+    <!-- Base application theme -->
+    <style name="Theme.NovaSec" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/nova_background</item>
+        <item name="android:navigationBarColor">@color/nova_background</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 
-    <style name="Theme.Nova.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:statusBarColor">@color/pink</item>
-        <item name="android:navigationBarColor">@color/pink</item>
-    </style>
-
-    <style name="CardView" parent="Theme.MaterialComponents.Light">
-        <item name="cardCornerRadius">16dp</item>
-        <item name="cardElevation">2dp</item>
+    <!-- Splash Screen Theme -->
+    <style name="Theme.NovaSec.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/nova_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.NovaSec</item>
+        <item name="android:statusBarColor">@color/nova_background</item>
+        <item name="android:navigationBarColor">@color/nova_background</item>
     </style>
 </resources>

@@ -1,20 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SecureAuth</string>
+    <string name="app_name">NovaSec</string>
 
-    <string name="onboarding_title_1">Your data, locked down</string>
-    <string name="onboarding_desc_1">Every credential is encrypted on-device using hardware-backed Android Keystore. Not even we can read it.</string>
+    <!-- Splash -->
+    <string name="splash_title">NovaSec</string>
+    <string name="splash_tagline">Secure. Simple. Smart.</string>
 
-    <string name="onboarding_title_2">Fast, offline-first</string>
-    <string name="onboarding_desc_2">Cached sessions mean you stay signed in securely, even with a spotty connection.</string>
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">Military-Grade Security</string>
+    <string name="onboarding_desc_1">Your data is protected with AES-256 encryption and zero-knowledge architecture.</string>
+    <string name="onboarding_title_2">Biometric Authentication</string>
+    <string name="onboarding_desc_2">Unlock with fingerprint or face recognition for instant, secure access.</string>
+    <string name="onboarding_title_3">Real-Time Monitoring</string>
+    <string name="onboarding_desc_3">Get instant alerts for suspicious activity and unauthorized access attempts.</string>
+    <string name="onboarding_title_4">Cross-Platform Sync</string>
+    <string name="onboarding_desc_4">Access your secure vault from any device, anywhere in the world.</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_skip">Skip</string>
 
-    <string name="onboarding_title_3">You\'re in control</string>
-    <string name="onboarding_desc_3">Biometric lock, session timeouts, and full account recovery — built in from day one.</string>
+    <!-- Auth -->
+    <string name="login_title">Welcome Back</string>
+    <string name="login_subtitle">Sign in to continue to your secure vault</string>
+    <string name="signup_title">Create Account</string>
+    <string name="signup_subtitle">Join NovaSec and secure your digital life</string>
+    <string name="email_label">Email Address</string>
+    <string name="password_label">Password</string>
+    <string name="confirm_password_label">Confirm Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Create Account</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="no_account">Dont have an account</string>
+    <string name="has_account">Already have an account?</string>
+    <string name="or_continue_with">or continue with</string>
 
-    <string name="skip">Skip</string>
-    <string name="next">Next</string>
-    <string name="get_started">Get Started</string>
+    <!-- Home -->
+    <string name="home_welcome">Welcome to NovaSec</string>
+    <string name="home_security_status">Security Status</string>
+    <string name="home_active_sessions">Active Sessions</string>
+    <string name="home_recent_alerts">Recent Alerts</string>
+    <string name="logout">Sign Out</string>
 
-    <string name="welcome_title">Welcome</string>
-    <string name="login">Log In</string>
-    <string name="create_account">Create Account</string>
+    <!-- Errors -->
+    <string name="error_invalid_email">Please enter a valid email address</string>
+    <string name="error_password_short">Password must be at least 8 characters</string>
+    <string name="error_passwords_match">Passwords do not match</string>
+    <string name="error_required_field">This field is required</string>
+    <string name="error_login_failed">Invalid email or password</string>
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_unknown">Something went wrong. Please try again.</string>
 </resources>

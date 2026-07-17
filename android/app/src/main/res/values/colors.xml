@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="pink">#FF6B9D</color>
-    <color name="pink_20">#FF6B9D20</color>
-    <color name="purple">#8B5CF6</color>
-    <color name="purple_20">#8B5CF620</color>
-    <color name="background">#FFF5F7</color>
-    <color name="white">#FFFFFF</color>
-    <color name="text_primary">#3A1A2E</color>
-    <color name="text_secondary">#9A7090</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="surface_variant">#F5F0F3</color>
-    <color name="divider">#E8E0E6</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- NovaSec Brand Colors -->
+    <color name="nova_primary">#FF6366F1</color>
+    <color name="nova_primary_dark">#FF4F46E5</color>
+    <color name="nova_secondary">#FF10B981</color>
+    <color name="nova_background">#FF0F172A</color>
+    <color name="nova_surface">#FF1E293B</color>
+    <color name="nova_error">#FFEF4444</color>
+    <color name="nova_on_primary">#FFFFFFFF</color>
+    <color name="nova_on_background">#FFF1F5F9</color>
+    <color name="nova_on_surface">#FFE2E8F0</color>
 </resources>
